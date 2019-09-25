@@ -1,6 +1,15 @@
 # MongoDB 基础
 
-## MongoDB 概念
+## 目录
+
+[MongoDB 概念](#gn)
+
+[MongoDB 连接](#connect)
+
+[MongoDB 操作](#cz)
+
+
+## <a id="gn">MongoDB 概念</a> 
 
 ### MongoDB 与 SQL 区别
 
@@ -20,7 +29,7 @@
 ### <a id="document">文档</a>
 文档就是一组键值对：{"id":123,"name":"李四"}
 
-## MongoDB 连接
+## <a id="connect">MongoDB 连接</a>
 - 在命令行工具下: > mongo  就能进入数据库
 - 连接本地数据库服务器，端口默认
   - > mongodb://localhost
@@ -28,7 +37,7 @@
   - > mongoose.connect('mongodb://i_blog_owner:1234@127.0.0.1:29999/blog',{useMongoClient:true}) 
 
 
-## 数据库操作
+## <a id="cz">数据库操作</a>
 
 ### use 数据库名
 use 数据库名 创建数据库 或 切换数据库
@@ -91,10 +100,80 @@ db.school.inster(document)
 db.school.find()
 ```
 
-### 
+### db.集合名.update()
+更新已存在的文档
 
+db.students.update(
+    <query>,        // 查询条件
+    <update>,       // 更新的对象和更新的操作符
+    {
+        upsert:<boolean>,   // 如果不存在update的记录，是否插入数据
+        multi:<boolean>,    // 默认flase，只查找符合的第一条
+        writeConcern:<document>     // 抛出异常的级别
+    }
+)
 
+```
+db.students.update({"name":"小明"},{$set:{"name":"小明2"}})
+```
 
+### db.集合名.save()
+更新已存在的文档
+
+db.studnets.save(
+    <document>
+)
+
+```
+db.students.save(
+    {
+        "_id":ObjectId("5d89eb537546512aa0cd063e"),
+        "uId":1622120069,
+        "name":"小明2",
+        "age":11,
+        "sex":1,
+        "cId":2
+    }
+)
+```
+
+### db.集合名.remove()
+删除文档
+db.集合名.remove(
+    <query>,    删除文档的条件
+    {
+        justOne:<boolean>,  默认false，true 则只匹配一项
+        writeConcern:<document>     抛出异常的级别
+    }
+)
+
+```
+db.studnet.remove(
+    {"name":"hy"}
+)
+```
+
+### db.集合名.find()
+db.students.find({},{"age":11,"name":''})   只显示显示age<10的数据，且返回的查询文档只有默认的_id，符合条件的age，和对应的name
+db.student.find().pretty()  以格式化的方式显示所有文档
+
+```
+db.students.find({"sex":{$gt:0}})  查找sex值大于0的文档
+```
+
+### 查询条件
+- 等于：db.student.find({"age":18})     age = 18
+- 小于：db.student.find({"age":{$lt:10}})     age < 10
+- 小于等于：db.student.find({"age":{$lte:10}})     age <= 10
+- 大于：db.student.find({"age":{$gt:10}})     age > 10
+- 大于等于：db.student.find({"age":{$gte:10}})     age >= 10
+- 不等于：db.student.find({"age":{$ne:10}})     age != 10
+- and：db.student.find({"name":"hy","age":18})  name = hy && age = 18
+- or：db.student.find({$or:[{"name":"hy"},{"age":18}]})     name = hy || age = 18
+- 范围：db.student.find({"age":{$gt:10,$lt:18}})    10 < a < 18
+- $type实例：db.student.find({"age":{$type:'string'}})    age值类型为string的文档
+- 查询指定的数据条数：db.studnet.find().limit(2)       查询2条数据，不传值则默认查询全部数据
+- 跳过指定的查询条数：db.student.find().skip(2)     查询前2条后的数据
 
 
 
