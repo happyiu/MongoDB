@@ -175,5 +175,69 @@ db.students.find({"sex":{$gt:0}})  查找sex值大于0的文档
 - 查询指定的数据条数：db.studnet.find().limit(2)       查询2条数据，不传值则默认查询全部数据
 - 跳过指定的查询条数：db.student.find().skip(2)     查询前2条后的数据
 
+### db.student.find().sort({key:1/-1})
+排序  1为升序，-1位降序
+db.student.find().sort({"age":1})  按age值的大小进行升序排序
+
+### 索引 
+#### db.集合名.createIndex(key,options)
+创建集合    1为升序，-1为降序
+db.student.createIndex({"age":1,"sex":1})  多个字段创建索引
+
+#### db.集合名.getIndexes()
+查看索引
+
+#### db.集合名.totalIndexSize()
+查看集合索引的大小
+
+#### db.集合名.dropIndexes()
+删除集合的所有索引
+
+#### db.集合名.dropIndex()
+删除集合指定的索引
+
+### 聚合
+主要用来处理数据（求平均值，求和）并返回结果
+db.student.aggregate()
+- $sum 计算总和
+- $avfg 计算平均值
+- $min 获取最小值
+- $max 获取最大值
+- $push 将结果文档中插入值到一个数组
+- $addToSet 将结果文档中插入值到一个数组，但不创建副本
+- $first 根据资源文档的排序获取第一个文档数据
+- $last 根据资源文档的排序获取最后一个文档数据
+
+```
+                        分组    主键       计算的结果
+db.student.aggregate([{$group:{_id:"sex",num:{$sum:1}}}])  将sex分组并统计每组的个数
+```
+
+### 多表关联
+db.student.aggregate([
+    {
+        $lookup:
+        {
+            from:"同一个数据库下待被Join的集合",
+            localField: "源集合中要匹配的属性",
+            foreignField: "待Join的集合中要匹配的属性",
+            as: "输出文档的命名"
+        }
+    }
+])
+ 
+```
+db.students.aggregate([
+    {
+        $lookup:
+        {
+            form:"class",
+            localField:"cid",
+            foreignField:"cid",
+            as:"stucalss"
+        }
+    }
+])
+```
 
 
